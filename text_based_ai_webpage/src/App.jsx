@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { useState } from "react";
+import Answers from "./components/Answers";
 
 export default function App() {
   const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
@@ -11,14 +12,14 @@ export default function App() {
       model: "gemini-2.5-flash",
       contents: `${question}`,
     });
-    setQuestion("")
+    setQuestion("");
 
     const data = response.text;
-    const newData = data.split("* ")
-    // console.log(newData)
+    const newData = data.split("* ");
+    console.log(newData)
 
-    const trimmedData = newData.map(item=> item.trim())
-    // console.log(trimmedData)
+    const trimmedData = newData.map((item) => item.trim());
+    console.log(trimmedData)
 
     setResult(trimmedData);
   };
@@ -33,7 +34,15 @@ export default function App() {
 
       <div className="col-span-4 h-screen ">
         <div className="container h-[80%] overflow-y-scroll text-white ">
-          {result}
+          <ul>
+            {result && (
+              <li className="text-left p-5">
+                {result.map((item, index) => (
+                  <Answers key={index} index={index} length = {result.length} ans={item} />
+                ))}
+              </li>
+            )}
+          </ul>
         </div>
         <div className=" border-0 border-zinc-300 h-16 mt-10 bg-zinc-600 rounded-4xl w-[75%] text-white flex justify-between mx-auto pr-5 ">
           <input
@@ -43,7 +52,9 @@ export default function App() {
             onChange={(e) => setQuestion(e.target.value)}
             className=" px-5 py-2 outline-none w-full h-full rounded-4xl text-lg"
           />
-          <button onClick={askQuestion} className="cursor-pointer">Ask</button>
+          <button onClick={askQuestion} className="cursor-pointer">
+            Ask
+          </button>
         </div>
       </div>
     </div>
